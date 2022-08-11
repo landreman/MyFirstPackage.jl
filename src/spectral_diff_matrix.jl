@@ -3,14 +3,15 @@
 
 Retun the Fourier differentiation matrix for a uniform grid.
 
-It is assumed that the data are given on a uniformly spaced grid from xmin to xmax, with a grid point at xmin but no grid point at xmax.
+It is assumed that the data are given on a uniformly spaced grid from xmin to
+xmax, with a grid point at xmin but no grid point at xmax.
 
-This routine is based on the matlab code in the DMSuite package by S.C. Reddy and J.A.C. Weideman, available at
-http://www.mathworks.com/matlabcentral/fileexchange/29
-or here:
+This routine is based on the matlab code in the DMSuite package by S.C. Reddy
+and J.A.C. Weideman, available at
+http://www.mathworks.com/matlabcentral/fileexchange/29 or here:
 http://dip.sun.ac.za/~weideman/research/differ.html  
 """
-function spectral_diff_matrix(n, xmin=0, xmax=2π)
+function spectral_diff_matrix(n; xmin=0, xmax=2π)
     h = 2π / n
     kk = 1 : n - 1
     n1 = Int(floor((n - 1) / 2))
