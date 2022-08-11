@@ -71,13 +71,13 @@ using Test
         xmax = -0.7
         L = xmax - xmin
         for nphi in 11:21
-            D = spectral_diff_matrix(nphi, xmin=xmin, xmax=xmax)
-            for n in range(0, Int(floor(nphi / 2)) - 1)
+            D = MyFirstPackage.spectral_diff_matrix(nphi, xmin=xmin, xmax=xmax)
+            for n in 0:Int(floor(nphi / 2) - 1)
                 for phase in [0, 0.3]
-                    phi = range(xmin, xmax, nphi + 1)[1:nphi]
+                    phi = range(xmin, xmax, length=nphi + 1)[1:nphi]
                     x = @. sin(n * phi * 2 * π / L + phase)
                     dx = @. (n * 2 * π / L) * cos(n * phi * 2 * π / L + phase)
-                    @test D * x ≈ dx rtol=1e-12  atol = 1e-12
+                    @test D * x ≈ dx rtol=1e-12  atol=1e-12
                 end
             end
         end

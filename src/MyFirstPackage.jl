@@ -1,6 +1,7 @@
 module MyFirstPackage
 
-export fun1, fun2, spectral_diff_matrix
+#export fun1, fun2, spectral_diff_matrix
+export fun1, fun2
 
 include("functions.jl")
 include("spectral_diff_matrix.jl")
