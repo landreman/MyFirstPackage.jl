@@ -24,7 +24,7 @@ function spectral_diff_matrix(n, xmin=0, xmax=2π)
         temp = [topc; topc[n1 : -1 : 1]]
     end
 
-    col1 = 2π / (xmax - xmin) * [0; -((-1) .^ kk) .* temp]
+    col1 = 2π / (xmax - xmin) * [0; ((-1) .^ kk) .* temp]
 
     # Form a Toeplitz matrix
     for j in 1:n
