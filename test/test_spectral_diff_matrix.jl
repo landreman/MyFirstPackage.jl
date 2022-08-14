@@ -82,4 +82,21 @@ using Test
             end
         end
     end
+
+    @testset "Do a bunch of tests for random xmin and xmax." begin
+        for n in 1:10
+            for whichrand in 1:10
+                xmin = rand() * 20 - 10
+                xmax = xmin + rand() * 20
+                D = MyFirstPackage.spectral_diff_matrix(n, xmin=xmin, xmax=xmax)
+                for j in 1:n
+                    # Check that the diagonal entries are all 0:
+                    @test D[j, j] ≈ 0 atol=1e-13
+                    # Check that the row and column sums are all 0
+                    @test sum(D[j, :]) ≈ 0 atol=1e-11
+                    @test sum(D[:, j]) ≈ 0 atol=1e-11
+                end
+            end
+        end
+    end
 end
