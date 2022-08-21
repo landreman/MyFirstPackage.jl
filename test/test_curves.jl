@@ -18,3 +18,16 @@ using Test
         @test get_dofs(curve) ≈ [2.0, 0.6, -0.3, -1.1, 0.4]
     end
 end
+
+@testset "Test curve_properties" begin
+    @testset "Check a circle" begin
+        R = 2.3
+        curve = CurveRZFourier(3, [R], [0])
+        n = 13
+        t = collect(range(0.0, 2π, length=n))
+        properties = curve_properties(curve, t)
+        @test properties["differential_arclength"] ≈ ones(n) * R
+        @test properties["curvature"] ≈ ones(n) * 1 / R
+        @test properties["torsion"] ≈ zeros(n)
+    end
+end
