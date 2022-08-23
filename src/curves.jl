@@ -21,6 +21,13 @@ function get_dofs(curve::CurveRZFourier)
     return [curve.rc; curve.zs[2:end]]
 end
 
+function set_dofs(curve::CurveRZFourier, dofs)
+    @assert length(dofs) % 2 == 1
+    n = Integer(ceil(length(dofs) / 2))
+    curve.rc = dofs[1 : n]
+    curve.zs = [0.0; dofs[n + 1 : end]]
+end
+
 dot(v1, v2) = v1[1] * v2[1] + v1[2] * v2[2] + v1[3] * v2[3]
 
 norm(v) = sqrt(v[1] * v[1] + v[2] * v[2] + v[3] * v[3])
@@ -61,9 +68,9 @@ function curve_properties(curve, t0)
                     / (norm_r_prime_cross_r_prime_prime * norm_r_prime_cross_r_prime_prime))
     end
 
-    return (Dict(
+    return Dict(
             "differential_arclength" => differential_arclength,
             "curvature" => curvature,
             "torsion" => torsion,
-            ))
+            )
 end

@@ -2,7 +2,7 @@ module MyFirstPackage
 
 #export fun1, fun2, spectral_diff_matrix
 export fun1, fun2
-export CurveRZFourier, position_vector, get_dofs, curve_properties
+export CurveRZFourier, position_vector, get_dofs, set_dofs, curve_properties
 
 include("functions.jl")
 include("spectral_diff_matrix.jl")
