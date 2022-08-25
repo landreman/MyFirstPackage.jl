@@ -59,7 +59,7 @@ curve_data() = curve_data(
 
 function compute_curve_data(curve, nt)
     nfp = curve.nfp
-    t = collect(range(0, 2π / nfp, nt + 1))[1 : end - 1]
+    t = collect(range(0, 2π / nfp, length = nt + 1))[1 : end - 1]
     dt = t[2] - t[1]
 
     #r_prime = jacobian(tt -> position_vector(curve, tt), t)[1]
