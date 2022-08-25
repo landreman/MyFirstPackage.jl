@@ -31,39 +31,41 @@ using Test
     end
 end
 
-@testset "Test curve_properties" begin
+@testset "Test compute_curve_data" begin
     @testset "Check a circle" begin
         R = 2.3
         curve = CurveRZFourier(3, [R], [0])
         n = 13
-        t = collect(range(0.0, 2π, length=n))
-        properties = curve_properties(curve, t)
-        @test properties["differential_arclength"] ≈ ones(n) * R
-        @test properties["curvature"] ≈ ones(n) * 1 / R
-        @test properties["torsion"] ≈ zeros(n)
+        data = compute_curve_data(curve, n)
+        @test data.differential_arclength ≈ ones(n) * R
+        @test data.curvature ≈ ones(n) * 1 / R
+        @test data.torsion ≈ zeros(n)
+        @test data.integrated_torsion ≈ 0
+        @test data.mean_squared_curvature ≈ 1 / (R * R)
     end
 
     @testset "Compare to QSC" begin
-        # O(r^1 section 5.2)
+        # O(r^1) section 5.2
         nfp = 2
         curve = CurveRZFourier(
             nfp,
             [1.     , 0.173  , 0.0168 , 0.00101],
             [0.      , 0.159   , 0.0165  , 0.000985]
             )
-        t = collect(range(0, π, length=16))[1:end - 1]
-        properties = curve_properties(curve, t)
+        data = compute_curve_data(curve, 15)
 
-        @test properties["differential_arclength"] ≈ [1.25301966, 1.23279065, 1.17766599, 1.10202631, 1.02332187,
+        @test data.differential_arclength ≈ [1.25301966, 1.23279065, 1.17766599, 1.10202631, 1.02332187,
             0.95601355, 0.90857199, 0.88440396, 0.88440396, 0.90857199,
             0.95601355, 1.02332187, 1.10202631, 1.17766599, 1.23279065]
 
-        @test properties["curvature"] ≈ [1.39355975, 1.36904437, 1.29001429, 1.14849644, 0.95518636,
+        @test data.curvature ≈ [1.39355975, 1.36904437, 1.29001429, 1.14849644, 0.95518636,
             0.75252884, 0.59242666, 0.5048237 , 0.5048237 , 0.59242666,
             0.75252884, 0.95518636, 1.14849644, 1.29001429, 1.36904437]
 
-        @test properties["torsion"] ≈ [-0.40604021, -0.42808217, -0.46686814, -0.4364834 , -0.20478637,
+        @test data.torsion ≈ [-0.40604021, -0.42808217, -0.46686814, -0.4364834 , -0.20478637,
             0.31002864,  0.99703528,  1.58019348,  1.58019348,  0.99703528,
             0.31002864, -0.20478637, -0.4364834 , -0.46686814, -0.42808217]
+
+        @test data.length ≈ 6.627758662958069
     end
 end
