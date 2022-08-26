@@ -1,4 +1,3 @@
-#using Zygote
 using ForwardDiff
 
 mutable struct CurveRZFourier
@@ -62,11 +61,7 @@ function compute_curve_data(curve, nt)
     t = collect(range(0, 2π / nfp, length = nt + 1))[1 : end - 1]
     dt = t[2] - t[1]
 
-    #r_prime = jacobian(tt -> position_vector(curve, tt), t)[1]
     f(tt) = position_vector(curve, tt)
-    #r_prime = ForwardDiff.derivative(f, t0)
-    #r_prime_prime = ForwardDiff.derivative(t -> ForwardDiff.derivative(f, t), t0)
-    #r_prime_prime_prime = ForwardDiff.derivative(t -> ForwardDiff.derivative(ForwardDiff.derivative(f, t), t), t0)
     f_prime(tt) = ForwardDiff.derivative(f, tt)
     f_prime_prime(tt) = ForwardDiff.derivative(f_prime, tt)
     f_prime_prime_prime(tt) = ForwardDiff.derivative(f_prime_prime, tt)
