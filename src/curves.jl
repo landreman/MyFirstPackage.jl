@@ -58,7 +58,7 @@ function get_dofs(curve::CurveRZFourier)
     return [curve.rc; curve.zs[2:end]]
 end
 
-function set_dofs(curve::CurveRZFourier, dofs)
+function set_dofs!(curve::CurveRZFourier, dofs)
     @assert length(dofs) % 2 == 1
     n = Integer(ceil(length(dofs) / 2))
     curve.rc = dofs[1 : n]

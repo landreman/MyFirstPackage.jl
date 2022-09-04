@@ -13,7 +13,7 @@ using ForwardDiff
     data = compute_curve_data(curve, nt)
 
     function objective(dofs)
-        set_dofs(curve, dofs)
+        set_dofs!(curve, dofs)
         
         data = compute_curve_data(curve, nt)
         return (

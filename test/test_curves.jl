@@ -20,7 +20,7 @@ using ForwardDiff
         end
     end
 
-    @testset "Check derivatives of the position vector for a specific case" begin
+    @testset "Check derivatives of the position vector for a specific case by comparing to automatic differentiation" begin
         nfp = 5
         curve = CurveRZFourier(nfp, [2.0, 0.6, -0.3], [0.0, -1.1, 0.4])
         f(tt) = position_vector(curve, tt)[1]
@@ -39,16 +39,16 @@ using ForwardDiff
         end
     end
 
-    @testset "Test set_dofs and get_dofs" begin
+    @testset "Test set_dofs! and get_dofs" begin
         curve = CurveRZFourier(2, [2.0, 0.6, -0.3], [0.0, -1.1, 0.4])
         @test get_dofs(curve) ≈ [2.0, 0.6, -0.3, -1.1, 0.4]
         
         x = rand(3)
-        set_dofs(curve, x)
+        set_dofs!(curve, x)
         @test get_dofs(curve) == x
         
         x = rand(7)
-        set_dofs(curve, x)
+        set_dofs!(curve, x)
         @test get_dofs(curve) == x
     end
 end
