@@ -1,6 +1,6 @@
 using MyFirstPackage
 using Test
-using Zygote
+#using Zygote
 using ForwardDiff
 
 @testset "Optimize curve shape" begin

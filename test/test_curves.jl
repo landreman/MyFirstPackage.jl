@@ -1,19 +1,41 @@
 using MyFirstPackage
 using Test
+using ForwardDiff
 
 @testset "Test CurveRZFourier" begin
     @testset "Check position vector for a specific case" begin
         nfp = 5
         curve = CurveRZFourier(nfp, [2.0, 0.6, -0.3], [0.0, -1.1, 0.4])
         for t in range(0.0, 2π, length=13)
-            x1, y1, z1 = position_vector(curve, t)
-            r = 2.0 + 0.6 * cos(nfp * t) - 0.3 * cos(2 * nfp * t)
+            #x1, y1, z1 = position_vector(curve, t)
+            r1, rp1, rpp1, rppp1 = position_vector(curve, t)
+
+            R2 = 2.0 + 0.6 * cos(nfp * t) - 0.3 * cos(2 * nfp * t)
             z2 = -1.1 * sin(nfp * t) + 0.4 * sin(2 * nfp * t)
-            x2 = r * cos(t)
-            y2 = r * sin(t)
-            @test x1 ≈ x2
-            @test y1 ≈ y2
-            @test z1 ≈ z2
+            x2 = R2 * cos(t)
+            y2 = R2 * sin(t)
+            @test r1[1] ≈ x2
+            @test r1[2] ≈ y2
+            @test r1[3] ≈ z2
+        end
+    end
+
+    @testset "Check derivatives of the position vector for a specific case" begin
+        nfp = 5
+        curve = CurveRZFourier(nfp, [2.0, 0.6, -0.3], [0.0, -1.1, 0.4])
+        f(tt) = position_vector(curve, tt)[1]
+        f_prime(tt) = ForwardDiff.derivative(f, tt)
+        f_prime_prime(tt) = ForwardDiff.derivative(f_prime, tt)
+        f_prime_prime_prime(tt) = ForwardDiff.derivative(f_prime_prime, tt)
+    
+
+        for t in range(0.0, 2π, length=13)
+            #x1, y1, z1 = position_vector(curve, t)
+            r1, rp1, rpp1, rppp1 = position_vector(curve, t)
+
+            @test f_prime(t) ≈ rp1
+            @test f_prime_prime(t) ≈ rpp1
+            @test f_prime_prime_prime(t) ≈ rppp1
         end
     end
 
