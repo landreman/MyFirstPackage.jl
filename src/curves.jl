@@ -1,4 +1,7 @@
-mutable struct CurveRZFourier
+using Zygote
+
+struct CurveRZFourier
+    #mutable struct CurveRZFourier
     nfp::Int
     rc::Vector{Float64}
     zs::Vector{Float64}
@@ -61,8 +64,8 @@ end
 function set_dofs!(curve::CurveRZFourier, dofs)
     @assert length(dofs) % 2 == 1
     n = Integer(ceil(length(dofs) / 2))
-    curve.rc = dofs[1 : n]
-    curve.zs = [0.0; dofs[n + 1 : end]]
+    curve.rc[:] = dofs[1 : n]
+    curve.zs[:] = [0.0; dofs[n + 1 : end]]
 end
 
 dot(v1, v2) = v1[1] * v2[1] + v1[2] * v2[2] + v1[3] * v2[3]
@@ -96,7 +99,8 @@ curve_data() = curve_data(
 
 function compute_curve_data(curve, nt)
     nfp = curve.nfp
-    t = collect(range(0, 2π / nfp, length = nt + 1))[1 : end - 1]
+    #t = collect(range(0, 2π / nfp, length = nt + 1))[1 : end - 1]  # Zygote isn't able to differentiate through this for some reason.
+    t = [j * 2π / (nt * nfp) for j in 0:(nt - 1)]
     dt = t[2] - t[1]
 
     "=
@@ -106,9 +110,12 @@ function compute_curve_data(curve, nt)
     f_prime_prime_prime(tt) = ForwardDiff.derivative(f_prime_prime, tt)
     ="
 
-    differential_arclength = zeros(nt)
-    curvature = zeros(nt)
-    torsion = zeros(nt)
+    #differential_arclength = zeros(nt)
+    #curvature = zeros(nt)
+    #torsion = zeros(nt)
+    differential_arclength = Zygote.Buffer(t)
+    curvature = Zygote.Buffer(t)
+    torsion = Zygote.Buffer(t)
     for j in 1:nt
         "=
         r_prime = f_prime(t[j])
@@ -127,6 +134,10 @@ function compute_curve_data(curve, nt)
         torsion[j] = (dot(r_prime_cross_r_prime_prime, r_prime_prime_prime) 
                     / (norm_r_prime_cross_r_prime_prime * norm_r_prime_cross_r_prime_prime))
     end
+
+    differential_arclength = copy(differential_arclength)
+    curvature = copy(curvature)
+    torsion = copy(torsion)
 
     length = sum(differential_arclength) * dt * nfp
     integrated_torsion = sum(differential_arclength .* torsion) * dt * nfp
