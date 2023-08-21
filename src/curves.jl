@@ -1,7 +1,9 @@
 using Zygote
 
-struct CurveRZFourier
-    #mutable struct CurveRZFourier
+abstract type Curve end
+
+# struct CurveRZFourier <: Curve
+mutable struct CurveRZFourier <: Curve
     nfp::Int
     rc::Vector{Float64}
     zs::Vector{Float64}
@@ -18,7 +20,7 @@ introduce a second level of automatic differentiation besides getting the
 overall derivative of the objective function, which doesn't seem to work. So
 here we just evaluate the derivatives analytically, which is not bad.
 """
-function position_vector(curve::CurveRZFourier, t)
+function position_vector(curve::CurveRZFourier, t::Number)
     r = [0.0, 0.0, 0.0]
     drdt = [0.0, 0.0, 0.0]
     d2rdt2 = [0.0, 0.0, 0.0]
@@ -57,6 +59,21 @@ function position_vector(curve::CurveRZFourier, t)
     return r, drdt, d2rdt2, d3rdt3
 end
 
+"""
+This function is the fallback. If v is not a number, it is usually iterable. 
+"""
+function position_vector(curve::CurveRZFourier, v)
+    n = length(v)
+    r = zeros(3, n)
+    drdt = zeros(3, n)
+    d2rdt2 = zeros(3, n)
+    d3rdt3 = zeros(3, n)
+    for j in 1:n
+        r[:, j], drdt[:, j], d2rdt2[:, j], d3rdt3[:, j] = position_vector(curve, v[j])
+    end
+    return r, drdt, d2rdt2, d3rdt3
+end
+
 function get_dofs(curve::CurveRZFourier)
     return [curve.rc; curve.zs[2:end]]
 end
@@ -64,8 +81,10 @@ end
 function set_dofs!(curve::CurveRZFourier, dofs)
     @assert length(dofs) % 2 == 1
     n = Integer(ceil(length(dofs) / 2))
-    curve.rc[:] = dofs[1 : n]
-    curve.zs[:] = [0.0; dofs[n + 1 : end]]
+    #curve.rc[:] = dofs[1 : n]
+    #curve.zs[:] = [0.0; dofs[n + 1 : end]]
+    curve.rc = dofs[1 : n]
+    curve.zs = [0.0; dofs[n + 1 : end]]
 end
 
 dot(v1, v2) = v1[1] * v2[1] + v1[2] * v2[2] + v1[3] * v2[3]

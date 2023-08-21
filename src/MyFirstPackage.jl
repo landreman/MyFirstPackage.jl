@@ -7,6 +7,7 @@ export CurveRZFourier, position_vector, get_dofs, set_dofs!, curve_data, compute
 include("functions.jl")
 include("spectral_diff_matrix.jl")
 include("curves.jl")
+include("plot.jl")
 
 function fun1(x, y)
     return 2 * x + y
